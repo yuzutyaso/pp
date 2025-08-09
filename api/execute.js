@@ -2,7 +2,7 @@ const { exec } = require('child_process');
 
 const allowedCommands = [
     'ls', 'echo', 'whoami', 'pwd', 'date',
-    'uname', 'df', 'free', 'expr"
+    'uname', 'df', 'free', 'expr',　'bc'
 ];
 
 module.exports = (req, res) => {
