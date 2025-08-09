@@ -11,15 +11,31 @@ document.addEventListener('DOMContentLoaded', () => {
         outputDiv.innerHTML += `<div class="input-line"><span class="prompt">$&nbsp;</span>${command}</div>`;
         commandInput.value = '';
 
+        // コマンドをスペースで分割して、最初の部分（コマンド名）を取得
+        const parts = command.split(' ');
+        const baseCommand = parts[0];
+
         try {
-            // Vercel上のサーバーレス関数へのリクエスト
-            const response = await fetch('/api/execute', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ command: command })
-            });
+            let response;
+            // pingコマンドが入力された場合は、専用のサーバーレス関数にリクエストを送信
+            if (baseCommand === 'ping') {
+                const host = parts[1];
+                if (!host) {
+                    throw new Error('ping: ホスト名が指定されていません。');
+                }
+                response = await fetch('/api/ping', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ host: host })
+                });
+            } else {
+                // その他のコマンドは、従来のサーバーレス関数にリクエストを送信
+                response = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ command: command })
+                });
+            }
 
             const data = await response.json();
             
