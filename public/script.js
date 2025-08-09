@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
         commandInput.value = '';
 
         try {
-            // バックエンドへのリクエスト
-            const response = await fetch('/execute', {
+            // Vercel上のサーバーレス関数へのリクエスト
+            const response = await fetch('/api/execute', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
