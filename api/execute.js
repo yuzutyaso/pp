@@ -1,16 +1,17 @@
-const express = require('express');
 const { exec } = require('child_process');
-const app = express();
-const port = 3000;
-
-app.use(express.static('public')); // publicディレクトリの静的ファイルを公開
-app.use(express.json());
 
 // 実行を許可するコマンドのホワイトリストを定義
 const allowedCommands = ['ls', 'echo', 'whoami'];
 
-app.post('/execute', (req, res) => {
-    const userInput = req.body.command;
+module.exports = (req, res) => {
+    // VercelはデフォルトでJSONリクエストをパースしないため、手動でパースします
+    const body = req.body;
+    const userInput = body.command;
+
+    if (!userInput) {
+        return res.status(400).json({ error: 'コマンドが指定されていません。' });
+    }
+
     const parts = userInput.trim().split(' ');
     const command = parts[0];
     
@@ -26,10 +27,6 @@ app.post('/execute', (req, res) => {
             return res.status(500).json({ error: `コマンドの実行中にエラーが発生しました: ${stderr}` });
         }
         
-        res.json({ result: stdout });
+        res.status(200).json({ result: stdout });
     });
-});
-
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
-});
+};
