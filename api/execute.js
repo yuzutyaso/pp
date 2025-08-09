@@ -1,9 +1,9 @@
 const { exec } = require('child_process');
 
-// 実行を許可するコマンドのホワイトリストを定義
 const allowedCommands = [
-    'ls', 'echo', 'whoami', 'pwd', 'date',
-    'uname', 'df', 'free', 'expr', 'cat'
+    'ls', 'echo', 'whoami', 'pwd', 'date', 'uname',
+    'df', 'free', 'expr', 'cat', 'cal', 'head',
+    'tail', 'wc', 'sort', 'uniq', 'grep', 'hostname'
 ];
 
 module.exports = (req, res) => {
@@ -17,7 +17,6 @@ module.exports = (req, res) => {
     const parts = userInput.trim().split(' ');
     const command = parts[0];
     
-    // コマンド名のみを抽出してホワイトリストと比較
     const baseCommand = command.split(' ')[0];
 
     if (!allowedCommands.includes(baseCommand)) {
