@@ -1,10 +1,11 @@
 const { exec } = require('child_process');
 
-// 実行を許可するコマンドのホワイトリストを定義
-const allowedCommands = ['ls', 'echo', 'whoami'];
+const allowedCommands = [
+    'ls', 'echo', 'whoami', 'pwd', 'date',
+    'uname', 'df', 'free'
+];
 
 module.exports = (req, res) => {
-    // VercelはデフォルトでJSONリクエストをパースしないため、手動でパースします
     const body = req.body;
     const userInput = body.command;
 
@@ -15,12 +16,13 @@ module.exports = (req, res) => {
     const parts = userInput.trim().split(' ');
     const command = parts[0];
     
-    // ホワイトリストにコマンドが含まれているかチェック
-    if (!allowedCommands.includes(command)) {
+    // コマンドにオプションが含まれている場合も考慮
+    const baseCommand = command.split(' ')[0];
+
+    if (!allowedCommands.includes(baseCommand)) {
         return res.status(403).json({ error: `許可されていないコマンドです: ${command}` });
     }
 
-    // コマンドを実行
     exec(userInput, (error, stdout, stderr) => {
         if (error) {
             console.error(`exec error: ${error}`);
