@@ -4,7 +4,7 @@ const allowedCommands = [
     'ls', 'echo', 'whoami', 'pwd', 'date', 'uname',
     'df', 'free', 'expr', 'cat', 'cal', 'head',
     'tail', 'wc', 'sort', 'uniq', 'grep', 'hostname',
-    'curl' // curlを追加
+    'curl', 'npm', 'npx' // curlを追加
 ];
 
 module.exports = (req, res) => {
