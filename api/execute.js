@@ -1,9 +1,9 @@
 const { exec } = require('child_process');
 
-const allowedCommands = [
-    'ls', 'echo', 'whoami', 'pwd', 'date',
-    'uname', 'df', 'free', 'expr',　'bc', 'shuf',
-     'curl'
+// 実行を禁止するコマンドのブラックリストを定義
+const blockedCommands = [
+    'rm', 'sh', 'bash', 'nc', 'wget', 'reboot', 'shutdown',
+    'sudo', 'su'
 ];
 
 module.exports = (req, res) => {
@@ -16,14 +16,15 @@ module.exports = (req, res) => {
 
     const parts = userInput.trim().split(' ');
     const command = parts[0];
-    
-    // コマンドにオプションが含まれている場合も考慮
     const baseCommand = command.split(' ')[0];
 
-    if (!allowedCommands.includes(baseCommand)) {
-        return res.status(403).json({ error: `許可されていないコマンドです: ${command}` });
+    // ブラックリストにコマンドが含まれていないかチェック
+    // ⚠️ このチェックだけでは不十分です
+    if (blockedCommands.includes(baseCommand)) {
+        return res.status(403).json({ error: `このコマンドは禁止されています: ${command}` });
     }
-
+    
+    // exec(userInput) は引き続き脆弱性を持っています
     exec(userInput, (error, stdout, stderr) => {
         if (error) {
             console.error(`exec error: ${error}`);
